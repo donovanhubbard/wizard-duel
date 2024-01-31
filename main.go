@@ -1,17 +1,21 @@
 package main
 
 import (
-  "github.com/charmbracelet/log"
-  "github.com/charmbracelet/ssh"
-  "github.com/charmbracelet/wish/logging"
-  "github.com/charmbracelet/wish"
-  "context"
-  "errors"
-  "fmt"
-  "os"
-  "os/signal"
-  "syscall"
-  "time"
+	"context"
+	"errors"
+	"fmt"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/log"
+	"github.com/charmbracelet/ssh"
+	"github.com/charmbracelet/wish"
+	bm "github.com/charmbracelet/wish/bubbletea"
+	"github.com/charmbracelet/wish/logging"
+	"github.com/donovanhubbard/wizard-duel/tui"
+	"github.com/muesli/termenv"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 const (
@@ -19,29 +23,37 @@ const (
 	port = 23234
 )
 
-func main(){
-  log.SetLevel(log.DebugLevel)
-  log.Infof("Starting program.")
+func programHandler(s ssh.Session) *tea.Program {
+	if _, _, active := s.Pty(); !active {
+		wish.Fatalln(s, "terminal is not active")
+	}
 
-  s, err := wish.NewServer(
+	var model tui.Model
+  options := bm.MakeOptions(s)
+  options = append(options,tea.WithAltScreen())
+	p := tea.NewProgram(model, options...)
+
+	return p
+}
+
+func main() {
+	log.SetLevel(log.DebugLevel)
+	log.Infof("Starting program.")
+
+	s, err := wish.NewServer(
 		wish.WithAddress(fmt.Sprintf("%s:%d", host, port)),
 		wish.WithHostKeyPath(".ssh/term_info_ed25519"),
 		wish.WithMiddleware(
-			func(h ssh.Handler) ssh.Handler {
-				return func(s ssh.Session) {
-					wish.Println(s, "Hello, world!")
-					h(s)
-				}
-			},
+			bm.MiddlewareWithProgramHandler(programHandler, termenv.ANSI256),
 			logging.Middleware(),
 		),
 	)
 
-  if err != nil {
+	if err != nil {
 		log.Error("could not start server", "error", err)
 	}
 
-  done := make(chan os.Signal, 1)
+	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	log.Info("Starting SSH server", "host", host, "port", port)
 	go func() {
