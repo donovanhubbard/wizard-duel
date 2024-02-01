@@ -1,12 +1,14 @@
 module github.com/donovanhubbard/wizard-duel
 
-go 1.21
+go 1.21.6
 
 require (
 	github.com/charmbracelet/bubbletea v0.25.0
+	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/charmbracelet/log v0.3.1
 	github.com/charmbracelet/ssh v0.0.0-20240130183930-33d2a30e8568
-	github.com/charmbracelet/wish v1.2.1-0.20240130182126-ee243c6d6b8a
+	github.com/charmbracelet/wish v1.3.0
+	github.com/enescakir/emoji v1.0.0
 	github.com/muesli/termenv v0.15.2
 )
 
@@ -14,7 +16,6 @@ require (
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/keygen v0.5.0 // indirect
-	github.com/charmbracelet/lipgloss v0.9.1 // indirect
 	github.com/charmbracelet/x/errors v0.0.0-20240117030013-d31dba354651 // indirect
 	github.com/charmbracelet/x/exp/term v0.0.0-20240130180102-bafe6fbaee60 // indirect
 	github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81 // indirect

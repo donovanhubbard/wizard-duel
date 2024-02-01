@@ -1,21 +1,20 @@
 package main
 
 import (
-	"context"
-	"errors"
-	"fmt"
-	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 	bm "github.com/charmbracelet/wish/bubbletea"
 	"github.com/charmbracelet/wish/logging"
-	"github.com/donovanhubbard/wizard-duel/tui"
 	"github.com/muesli/termenv"
+	"github.com/donovanhubbard/wizard-duel/app"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+	"context"
+	"errors"
+	"fmt"
 )
 
 const (
@@ -23,28 +22,17 @@ const (
 	port = 23234
 )
 
-func programHandler(s ssh.Session) *tea.Program {
-	if _, _, active := s.Pty(); !active {
-		wish.Fatalln(s, "terminal is not active")
-	}
-
-	var model tui.Model
-  options := bm.MakeOptions(s)
-  options = append(options,tea.WithAltScreen())
-	p := tea.NewProgram(model, options...)
-
-	return p
-}
-
 func main() {
 	log.SetLevel(log.DebugLevel)
 	log.Infof("Starting program.")
+
+  a := app.NewApp()
 
 	s, err := wish.NewServer(
 		wish.WithAddress(fmt.Sprintf("%s:%d", host, port)),
 		wish.WithHostKeyPath(".ssh/term_info_ed25519"),
 		wish.WithMiddleware(
-			bm.MiddlewareWithProgramHandler(programHandler, termenv.ANSI256),
+			bm.MiddlewareWithProgramHandler(a.ProgramHandler, termenv.ANSI256),
 			logging.Middleware(),
 		),
 	)
