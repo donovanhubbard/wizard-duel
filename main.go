@@ -22,6 +22,8 @@ const (
 	port = 23234
 )
 
+
+
 func main() {
 	log.SetLevel(log.DebugLevel)
 	log.Infof("Starting program.")
@@ -59,3 +61,4 @@ func main() {
 		log.Error("could not stop server", "error", err)
 	}
 }
+

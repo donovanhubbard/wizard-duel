@@ -1,23 +1,29 @@
 package app
 
 import (
-	tea "github.com/charmbracelet/bubbletea"
-	bm "github.com/charmbracelet/wish/bubbletea"
-	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
+	bm "github.com/charmbracelet/wish/bubbletea"
+  tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/ssh"
 	"github.com/donovanhubbard/wizard-duel/entities"
-	"github.com/donovanhubbard/wizard-duel/tui"
 )
 
 type App struct {
-  grid entities.Grid
+  grid *entities.Grid
   teaPrograms []*tea.Program
 }
 
 func NewApp() App{
+  g := entities.NewGrid()
   return App{
-    grid: entities.NewGrid(),
+    grid: &g,
   }
+}
+
+func (a *App) Send(msg tea.Msg) {
+	for _, p := range a.teaPrograms {
+		go p.Send(msg)
+	}
 }
 
 func (a *App) ProgramHandler(s ssh.Session) *tea.Program {
@@ -25,8 +31,15 @@ func (a *App) ProgramHandler(s ssh.Session) *tea.Program {
 		wish.Fatalln(s, "terminal is not active")
 	}
 
-	var model tui.Model
-  model.Grid = a.grid
+	var model Model
+  model.App = a
+  model.Grid = *a.grid
+  player := entities.CreateNextPlayer()
+  a.grid.PlacePlayer(&player)
+
+  gu := GridUpdateMsg{Grid:*a.grid}
+  a.Send(gu)
+
   options := bm.MakeOptions(s)
   options = append(options,tea.WithAltScreen())
 	p := tea.NewProgram(model, options...)

@@ -1,7 +1,11 @@
 package entities
 
+import (
+  "math/rand"
+)
+
 const (
-  WIDTH = 40
+  WIDTH = 30
   HEIGHT = 20
 )
 
@@ -15,5 +19,17 @@ func NewGrid() Grid{
   }
 
   return g
+}
+
+func (g *Grid) PlacePlayer(p *Entity){
+  var x, y int
+  for true {
+    y = rand.Intn(HEIGHT)
+    x = rand.Intn(WIDTH)
+    if (*g)[y][x] == nil {
+      break
+    }
+  }
+  (*g)[y][x] = p
 }
 

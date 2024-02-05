@@ -1,4 +1,4 @@
-package tui
+package app
 
 import (
   "strings"
@@ -15,6 +15,7 @@ const (
 
 type Model struct{
   Grid entities.Grid
+  App *App
 }
 
 func (m Model) Init() tea.Cmd {
@@ -28,6 +29,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c":
 			return m, tea.Quit
 		}
+  case GridUpdateMsg:
+    m.Grid = msg.Grid
 	}
 	return m, nil
 }
