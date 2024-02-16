@@ -44,7 +44,7 @@ func CreateNextPlayer() Entity {
 
 func (e *Entity) Render(sb *strings.Builder) {
 	if e == nil {
-		sb.WriteString("\\/")
+		sb.WriteString("  ")
 	} else {
 		switch e.Type {
 		case WALL:
