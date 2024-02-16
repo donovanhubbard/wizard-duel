@@ -9,6 +9,7 @@ require (
 	github.com/charmbracelet/ssh v0.0.0-20240130183930-33d2a30e8568
 	github.com/charmbracelet/wish v1.3.0
 	github.com/enescakir/emoji v1.0.0
+	github.com/google/uuid v1.3.0
 	github.com/muesli/termenv v0.15.2
 )
 

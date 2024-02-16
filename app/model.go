@@ -1,21 +1,21 @@
 package app
 
 import (
-  "strings"
 	tea "github.com/charmbracelet/bubbletea"
-  "github.com/charmbracelet/lipgloss"
-  "github.com/enescakir/emoji"
-	"github.com/donovanhubbard/wizard-duel/entities"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/enescakir/emoji"
+	"strings"
 )
 
 const (
-  PURPLE = lipgloss.Color("13")
-  GREEN  = lipgloss.Color("10")
+	PURPLE = lipgloss.Color("13")
+	GREEN  = lipgloss.Color("10")
 )
 
-type Model struct{
-  Grid entities.Grid
-  App *App
+type Model struct {
+	Grid Grid
+	App  *App
+	ID   string
 }
 
 func (m Model) Init() tea.Cmd {
@@ -28,39 +28,62 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c":
 			return m, tea.Quit
+		case "a":
+			msg := PlanMoveMsg{
+				Direction: WEST,
+				ID:        m.ID,
+			}
+			m.App.Send(msg)
+		case "w":
+			msg := PlanMoveMsg{
+				Direction: NORTH,
+				ID:        m.ID,
+			}
+			m.App.Send(msg)
+		case "d":
+			msg := PlanMoveMsg{
+				Direction: EAST,
+				ID:        m.ID,
+			}
+			m.App.Send(msg)
+		case "s":
+			msg := PlanMoveMsg{
+				Direction: SOUTH,
+				ID:        m.ID,
+			}
+			m.App.Send(msg)
 		}
-  case GridUpdateMsg:
-    m.Grid = msg.Grid
+	case GridUpdateMsg:
+		m.Grid = msg.Grid
 	}
 	return m, nil
 }
 
 func (m Model) View() string {
 
-  var sb strings.Builder
-  for i, _ := range m.Grid{
-    for j, _ := range m.Grid[i]{
-      entity := m.Grid[i][j]
-      entity.Render(&sb)
-    }
-    sb.WriteString("\n")
-  }
+	var sb strings.Builder
+	for i, _ := range m.Grid {
+		for j, _ := range m.Grid[i] {
+			entity := m.Grid[i][j]
+			entity.Render(&sb)
+		}
+		sb.WriteString("\n")
+	}
 
-  defaultStyle := lipgloss.NewStyle().
-                  BorderStyle(lipgloss.RoundedBorder()).
-		              BorderForeground(PURPLE).
-                  Foreground(GREEN)
+	defaultStyle := lipgloss.NewStyle().
+		BorderStyle(lipgloss.RoundedBorder()).
+		BorderForeground(PURPLE).
+		Foreground(GREEN)
 
+	header := defaultStyle.SetString(emoji.Parse(":mage: Wizard Duel :mage:")).String()
 
-  header := defaultStyle.SetString(emoji.Parse(":mage: Wizard Duel :mage:")).String()
+	grid := defaultStyle.
+		PaddingLeft(1).
+		PaddingRight(1).
+		SetString(sb.String()).
+		String()
 
-  grid := defaultStyle.
-            PaddingLeft(1).
-            PaddingRight(1).
-            SetString(sb.String()).
-            String()
+	text := lipgloss.JoinVertical(lipgloss.Center, header, grid)
 
-  text := lipgloss.JoinVertical(lipgloss.Center, header, grid)
-
-  return text
+	return text
 }

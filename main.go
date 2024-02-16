@@ -1,20 +1,20 @@
 package main
 
 import (
+	"context"
+	"errors"
+	"fmt"
 	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 	bm "github.com/charmbracelet/wish/bubbletea"
 	"github.com/charmbracelet/wish/logging"
-	"github.com/muesli/termenv"
 	"github.com/donovanhubbard/wizard-duel/app"
+	"github.com/muesli/termenv"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-	"context"
-	"errors"
-	"fmt"
 )
 
 const (
@@ -22,13 +22,11 @@ const (
 	port = 23234
 )
 
-
-
 func main() {
 	log.SetLevel(log.DebugLevel)
 	log.Infof("Starting program.")
 
-  a := app.NewApp()
+	a := app.NewApp()
 
 	s, err := wish.NewServer(
 		wish.WithAddress(fmt.Sprintf("%s:%d", host, port)),
@@ -53,6 +51,8 @@ func main() {
 		}
 	}()
 
+	a.Start()
+
 	<-done
 	log.Info("Stopping SSH server")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -61,4 +61,3 @@ func main() {
 		log.Error("could not stop server", "error", err)
 	}
 }
-
