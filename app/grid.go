@@ -24,6 +24,13 @@ func NewGrid() *Grid {
 	return g
 }
 
+func (g *Grid) PlaceCastles() {
+	g.SpawnEntity(CreateCastle(), 4, 4)
+	g.SpawnEntity(CreateCastle(), 14, 4)
+	g.SpawnEntity(CreateCastle(), 4, 24)
+	g.SpawnEntity(CreateCastle(), 14, 24)
+}
+
 func (g *Grid) PlacePlayer(p *Entity) {
 	var x, y int
 	for true {

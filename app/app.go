@@ -22,6 +22,7 @@ type App struct {
 
 func NewApp() App {
 	g := NewGrid()
+	(*g).PlaceCastles()
 	return App{
 		grid: g,
 	}
@@ -32,7 +33,6 @@ func (a *App) Start() {
 	go func() {
 		for true {
 			time.Sleep(TICK_DURATION_MS * time.Millisecond)
-			log.Info("tick")
 			a.MoveAll()
 			a.CastSpells()
 			a.Send(GridUpdateMsg{*a.grid})
@@ -47,7 +47,6 @@ func (a *App) MoveAll() {
 		for x, _ := range (*oldGrid)[y] {
 			entity := (*oldGrid)[y][x]
 			if entity != nil { //&& entity.NextMove != "" {
-				log.Infof("Type: %s ID: %s NextMove: %s", entity.Type, entity.ID, entity.NextMove)
 				Move(oldGrid, nextGrid, y, x)
 			}
 		}

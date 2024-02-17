@@ -11,6 +11,7 @@ const (
 	WALL     = "wall"
 	PLAYER   = "player"
 	FIREBALL = "fireball"
+	CASTLE   = "castle"
 	NORTH    = "north"
 	SOUTH    = "south"
 	EAST     = "east"
@@ -23,10 +24,11 @@ var (
 )
 
 type Entity struct {
-	Skin     string
-	Type     string
-	ID       string
-	NextMove string
+	Skin           string
+	Type           string
+	ID             string
+	NextMove       string
+	Indestructible bool
 }
 
 func CreateNextPlayer() Entity {
@@ -37,18 +39,29 @@ func CreateNextPlayer() Entity {
 	}
 	id := uuid.New().String()
 	return Entity{
-		Type: PLAYER,
-		Skin: s,
-		ID:   id,
+		Type:           PLAYER,
+		Skin:           s,
+		ID:             id,
+		Indestructible: false,
+	}
+}
+
+func CreateCastle() Entity {
+	id := uuid.New().String()
+	return Entity{
+		Type:           CASTLE,
+		ID:             id,
+		Indestructible: true,
 	}
 }
 
 func CreateFireball(direction string) Entity {
 	id := uuid.New().String()
 	return Entity{
-		Type:     FIREBALL,
-		ID:       id,
-		NextMove: direction,
+		Type:           FIREBALL,
+		ID:             id,
+		NextMove:       direction,
+		Indestructible: false,
 	}
 }
 
@@ -86,6 +99,8 @@ func (e *Entity) Render(sb *strings.Builder) {
 			}
 		case FIREBALL:
 			sb.WriteString(fmt.Sprintf("%v", emoji.Fire))
+		case CASTLE:
+			sb.WriteString(fmt.Sprintf("%v", emoji.Castle))
 		default:
 			sb.WriteString("?")
 		}
