@@ -24,11 +24,12 @@ var (
 )
 
 type Entity struct {
-	Skin           string
-	Type           string
-	ID             string
-	NextMove       string
-	Indestructible bool
+	Skin            string
+	Type            string
+	ID              string
+	NextMove        string
+	Indestructible  bool
+	RemoveOnContact bool
 }
 
 func CreateNextPlayer() Entity {
@@ -58,10 +59,11 @@ func CreateCastle() Entity {
 func CreateFireball(direction string) Entity {
 	id := uuid.New().String()
 	return Entity{
-		Type:           FIREBALL,
-		ID:             id,
-		NextMove:       direction,
-		Indestructible: false,
+		Type:            FIREBALL,
+		ID:              id,
+		NextMove:        direction,
+		Indestructible:  false,
+		RemoveOnContact: true,
 	}
 }
 

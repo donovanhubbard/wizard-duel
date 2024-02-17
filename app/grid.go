@@ -50,40 +50,40 @@ func Move(oldGrid *Grid, nextGrid *Grid, y int, x int) {
 		if y > 0 {
 			if (*oldGrid)[y-1][x] == nil {
 				(*nextGrid)[y-1][x] = entity
-			} else {
+			} else if !entity.RemoveOnContact {
 				(*nextGrid)[y][x] = entity
 			}
-		} else {
+		} else if !entity.RemoveOnContact {
 			(*nextGrid)[y][x] = entity
 		}
 	case SOUTH:
 		if y < len(*oldGrid)-1 {
 			if (*oldGrid)[y+1][x] == nil {
 				(*nextGrid)[y+1][x] = entity
-			} else {
+			} else if !entity.RemoveOnContact {
 				(*nextGrid)[y][x] = entity
 			}
-		} else {
+		} else if !entity.RemoveOnContact {
 			(*nextGrid)[y][x] = entity
 		}
 	case EAST:
 		if x < len((*oldGrid)[y])-1 {
 			if (*oldGrid)[y][x+1] == nil {
 				(*nextGrid)[y][x+1] = entity
-			} else {
+			} else if !entity.RemoveOnContact {
 				(*nextGrid)[y][x] = entity
 			}
-		} else {
+		} else if !entity.RemoveOnContact {
 			(*nextGrid)[y][x] = entity
 		}
 	case WEST:
 		if x > 0 {
 			if (*oldGrid)[y][x-1] == nil {
 				(*nextGrid)[y][x-1] = entity
-			} else {
+			} else if !entity.RemoveOnContact {
 				(*nextGrid)[y][x] = entity
 			}
-		} else {
+		} else if !entity.RemoveOnContact {
 			(*nextGrid)[y][x] = entity
 		}
 	default:
