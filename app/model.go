@@ -52,6 +52,34 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				ID:        m.ID,
 			}
 			m.App.Send(msg)
+		case "up":
+			msg := CastSpellMsg{
+				ID:        m.ID,
+				Type:      FIREBALL,
+				Direction: NORTH,
+			}
+			m.App.Send(msg)
+		case "down":
+			msg := CastSpellMsg{
+				ID:        m.ID,
+				Type:      FIREBALL,
+				Direction: SOUTH,
+			}
+			m.App.Send(msg)
+		case "right":
+			msg := CastSpellMsg{
+				ID:        m.ID,
+				Type:      FIREBALL,
+				Direction: EAST,
+			}
+			m.App.Send(msg)
+		case "left":
+			msg := CastSpellMsg{
+				ID:        m.ID,
+				Type:      FIREBALL,
+				Direction: WEST,
+			}
+			m.App.Send(msg)
 		}
 	case GridUpdateMsg:
 		m.Grid = msg.Grid

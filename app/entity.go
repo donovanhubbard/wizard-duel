@@ -8,12 +8,13 @@ import (
 )
 
 const (
-	WALL   = "wall"
-	PLAYER = "player"
-	NORTH  = "north"
-	SOUTH  = "south"
-	EAST   = "east"
-	WEST   = "west"
+	WALL     = "wall"
+	PLAYER   = "player"
+	FIREBALL = "fireball"
+	NORTH    = "north"
+	SOUTH    = "south"
+	EAST     = "east"
+	WEST     = "west"
 )
 
 var (
@@ -39,6 +40,15 @@ func CreateNextPlayer() Entity {
 		Type: PLAYER,
 		Skin: s,
 		ID:   id,
+	}
+}
+
+func CreateFireball(direction string) Entity {
+	id := uuid.New().String()
+	return Entity{
+		Type:     FIREBALL,
+		ID:       id,
+		NextMove: direction,
 	}
 }
 
@@ -74,6 +84,8 @@ func (e *Entity) Render(sb *strings.Builder) {
 			default:
 				sb.WriteString("?")
 			}
+		case FIREBALL:
+			sb.WriteString(fmt.Sprintf("%v", emoji.Fire))
 		default:
 			sb.WriteString("?")
 		}

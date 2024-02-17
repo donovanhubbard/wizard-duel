@@ -3,7 +3,6 @@ package app
 import (
 	"errors"
 	"fmt"
-	"github.com/charmbracelet/log"
 	"math/rand"
 )
 
@@ -14,11 +13,12 @@ const (
 
 type Grid [][]*Entity
 
-func NewGrid() Grid {
-	var g Grid
-	g = make([][]*Entity, HEIGHT)
-	for i := range g {
-		g[i] = make([]*Entity, WIDTH)
+func NewGrid() *Grid {
+	var g *Grid
+	grid := make(Grid, HEIGHT)
+	g = &grid
+	for i := range *g {
+		(*g)[i] = make([]*Entity, WIDTH)
 	}
 
 	return g
@@ -36,62 +36,72 @@ func (g *Grid) PlacePlayer(p *Entity) {
 	(*g)[y][x] = p
 }
 
-func (g Grid) MoveAll() {
-	for y, _ := range g {
-		for x, _ := range g[y] {
-			entity := g[y][x]
-			if entity != nil { //&& entity.NextMove != "" {
-				log.Infof("Type: %s ID: %s NextMove: %s", entity.Type, entity.ID, entity.NextMove)
-				g.Move(entity, y, x)
-			}
-		}
-	}
-}
-
-func (g Grid) Move(entity *Entity, y int, x int) {
+func Move(oldGrid *Grid, nextGrid *Grid, y int, x int) {
+	entity := (*oldGrid)[y][x]
 	switch entity.NextMove {
 	case NORTH:
 		if y > 0 {
-			if g[y-1][x] == nil {
-				g[y-1][x] = entity
-				g[y][x] = nil
+			if (*oldGrid)[y-1][x] == nil {
+				(*nextGrid)[y-1][x] = entity
+			} else {
+				(*nextGrid)[y][x] = entity
 			}
+		} else {
+			(*nextGrid)[y][x] = entity
 		}
 	case SOUTH:
-		if y < len(g)-1 {
-			if g[y+1][x] == nil {
-				g[y+1][x] = entity
-				g[y][x] = nil
+		if y < len(*oldGrid)-1 {
+			if (*oldGrid)[y+1][x] == nil {
+				(*nextGrid)[y+1][x] = entity
+			} else {
+				(*nextGrid)[y][x] = entity
 			}
+		} else {
+			(*nextGrid)[y][x] = entity
 		}
 	case EAST:
-		if x < len(g[y])-1 {
-			if g[y][x+1] == nil {
-				g[y][x+1] = entity
-				g[y][x] = nil
+		if x < len((*oldGrid)[y])-1 {
+			if (*oldGrid)[y][x+1] == nil {
+				(*nextGrid)[y][x+1] = entity
+			} else {
+				(*nextGrid)[y][x] = entity
 			}
+		} else {
+			(*nextGrid)[y][x] = entity
 		}
 	case WEST:
 		if x > 0 {
-			if g[y][x-1] == nil {
-				g[y][x-1] = entity
-				g[y][x] = nil
+			if (*oldGrid)[y][x-1] == nil {
+				(*nextGrid)[y][x-1] = entity
+			} else {
+				(*nextGrid)[y][x] = entity
 			}
+		} else {
+			(*nextGrid)[y][x] = entity
 		}
+	default:
+		(*nextGrid)[y][x] = entity
 	}
-	entity.NextMove = ""
+	switch entity.Type {
+	case PLAYER:
+		entity.NextMove = ""
+	}
 }
 
-func (g Grid) FindEntity(id string) (*Entity, error) {
+func (g *Grid) SpawnEntity(e Entity, y int, x int) {
+	(*g)[y][x] = &e
+}
+
+func (g Grid) FindEntity(id string) (*Entity, int, int, error) {
 	for y, _ := range g {
 		for x, _ := range g[y] {
 			entity := g[y][x]
 			if entity != nil {
 				if entity.ID == id {
-					return entity, nil
+					return entity, y, x, nil
 				}
 			}
 		}
 	}
-	return nil, errors.New(fmt.Sprintf("Failed to find entity '%s'", id))
+	return nil, 0, 0, errors.New(fmt.Sprintf("Failed to find entity '%s'", id))
 }
