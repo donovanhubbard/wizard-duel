@@ -121,8 +121,9 @@ func (a *App) ProgramHandler(s ssh.Session) *tea.Program {
 	model.App = a
 	model.Grid = *a.grid
 	player := CreateNextPlayer()
-	a.grid.PlacePlayer(&player)
+	a.grid.PlacePlayer(player)
 	model.ID = player.ID
+	model.PC = player
 
 	gu := GridUpdateMsg{Grid: *a.grid}
 	a.Send(gu)

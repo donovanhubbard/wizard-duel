@@ -8,14 +8,15 @@ import (
 )
 
 const (
-	WALL     = "wall"
-	PLAYER   = "player"
-	FIREBALL = "fireball"
-	CASTLE   = "castle"
-	NORTH    = "north"
-	SOUTH    = "south"
-	EAST     = "east"
-	WEST     = "west"
+	WALL              = "wall"
+	PLAYER            = "player"
+	FIREBALL          = "fireball"
+	CASTLE            = "castle"
+	NORTH             = "north"
+	SOUTH             = "south"
+	EAST              = "east"
+	WEST              = "west"
+	PLAYER_MAX_HEALTH = 5
 )
 
 var (
@@ -30,20 +31,22 @@ type Entity struct {
 	NextMove        string
 	Indestructible  bool
 	RemoveOnContact bool
+	Health          int
 }
 
-func CreateNextPlayer() Entity {
+func CreateNextPlayer() *Entity {
 	s := pSkins[currentPSkin]
 	currentPSkin++
 	if currentPSkin >= len(pSkins) {
 		currentPSkin = 0
 	}
 	id := uuid.New().String()
-	return Entity{
+	return &Entity{
 		Type:           PLAYER,
 		Skin:           s,
 		ID:             id,
 		Indestructible: false,
+		Health:         PLAYER_MAX_HEALTH,
 	}
 }
 
@@ -64,6 +67,7 @@ func CreateFireball(direction string) Entity {
 		NextMove:        direction,
 		Indestructible:  false,
 		RemoveOnContact: true,
+		Health:          1,
 	}
 }
 
