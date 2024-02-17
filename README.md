@@ -7,3 +7,4 @@ A proof of concept multiplayer ssh terminal app.
 - Damage players when hit by fireball
 - Kill player when health is 0
 - Respawn player with space bar
+- Fix bug where casting fireball on top of entity destroys the entity
