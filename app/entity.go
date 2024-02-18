@@ -34,6 +34,12 @@ type Entity struct {
 	Health          int
 }
 
+func (e *Entity) Damage() {
+	if !e.Indestructible {
+		e.Health--
+	}
+}
+
 func CreateNextPlayer() *Entity {
 	s := pSkins[currentPSkin]
 	currentPSkin++
@@ -50,18 +56,18 @@ func CreateNextPlayer() *Entity {
 	}
 }
 
-func CreateCastle() Entity {
+func CreateCastle() *Entity {
 	id := uuid.New().String()
-	return Entity{
+	return &Entity{
 		Type:           CASTLE,
 		ID:             id,
 		Indestructible: true,
 	}
 }
 
-func CreateFireball(direction string) Entity {
+func CreateFireball(direction string) *Entity {
 	id := uuid.New().String()
-	return Entity{
+	return &Entity{
 		Type:            FIREBALL,
 		ID:              id,
 		NextMove:        direction,

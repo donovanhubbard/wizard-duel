@@ -44,65 +44,65 @@ func (g *Grid) PlacePlayer(p *Entity) {
 }
 
 func Move(oldGrid *Grid, nextGrid *Grid, y int, x int) {
+	var nextY, nextX int
 	entity := (*oldGrid)[y][x]
+
 	switch entity.NextMove {
 	case NORTH:
 		if y > 0 {
-			if (*oldGrid)[y-1][x] == nil {
-				(*nextGrid)[y-1][x] = entity
-			} else if !entity.RemoveOnContact {
-				(*nextGrid)[y][x] = entity
-			}
-		} else if !entity.RemoveOnContact {
-			(*nextGrid)[y][x] = entity
+			nextY = y - 1
+		} else {
+			nextY = y
 		}
+		nextX = x
 	case SOUTH:
 		if y < len(*oldGrid)-1 {
-			if (*oldGrid)[y+1][x] == nil {
-				(*nextGrid)[y+1][x] = entity
-			} else if !entity.RemoveOnContact {
-				(*nextGrid)[y][x] = entity
-			}
-		} else if !entity.RemoveOnContact {
-			(*nextGrid)[y][x] = entity
+			nextY = y + 1
+		} else {
+			nextY = y
 		}
-	case EAST:
-		if x < len((*oldGrid)[y])-1 {
-			if (*oldGrid)[y][x+1] == nil {
-				(*nextGrid)[y][x+1] = entity
-			} else if !entity.RemoveOnContact {
-				(*nextGrid)[y][x] = entity
-			}
-		} else if !entity.RemoveOnContact {
-			(*nextGrid)[y][x] = entity
-		}
+		nextX = x
 	case WEST:
 		if x > 0 {
-			if (*oldGrid)[y][x-1] == nil {
-				(*nextGrid)[y][x-1] = entity
-			} else if !entity.RemoveOnContact {
-				(*nextGrid)[y][x] = entity
-			}
-		} else if !entity.RemoveOnContact {
+			nextX = x - 1
+		}
+		nextY = y
+	case EAST:
+		if x < len((*oldGrid)[y])-1 {
+			nextX = x + 1
+		} else {
+			nextX = x
+		}
+		nextY = y
+	default:
+		nextY = y
+		nextX = x
+	}
+
+	nextEntity := (*oldGrid)[nextY][nextX]
+
+	if nextEntity == nil {
+		(*nextGrid)[nextY][nextX] = entity
+	} else {
+		if !entity.RemoveOnContact {
 			(*nextGrid)[y][x] = entity
 		}
-	default:
-		(*nextGrid)[y][x] = entity
 	}
+
 	switch entity.Type {
 	case PLAYER:
 		entity.NextMove = ""
 	}
 }
 
-func (g *Grid) SpawnEntity(e Entity, y int, x int) {
-	(*g)[y][x] = &e
+func (g *Grid) SpawnEntity(e *Entity, y int, x int) {
+	(*g)[y][x] = e
 }
 
-func (g Grid) FindEntity(id string) (*Entity, int, int, error) {
-	for y, _ := range g {
-		for x, _ := range g[y] {
-			entity := g[y][x]
+func (g *Grid) FindEntity(id string) (*Entity, int, int, error) {
+	for y, _ := range *g {
+		for x, _ := range (*g)[y] {
+			entity := (*g)[y][x]
 			if entity != nil {
 				if entity.ID == id {
 					return entity, y, x, nil
