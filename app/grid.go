@@ -87,6 +87,9 @@ func Move(oldGrid *Grid, nextGrid *Grid, y int, x int) {
 		if !entity.RemoveOnContact {
 			(*nextGrid)[y][x] = entity
 		}
+		if !nextEntity.Indestructible && entity.Damage > 0 {
+			nextEntity.DealDamage(entity.Damage)
+		}
 	}
 
 	switch entity.Type {

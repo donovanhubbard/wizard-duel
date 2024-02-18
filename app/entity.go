@@ -32,11 +32,12 @@ type Entity struct {
 	Indestructible  bool
 	RemoveOnContact bool
 	Health          int
+	Damage          int
 }
 
-func (e *Entity) Damage() {
+func (e *Entity) DealDamage(amount int) {
 	if !e.Indestructible {
-		e.Health--
+		e.Health -= amount
 	}
 }
 
@@ -74,6 +75,7 @@ func CreateFireball(direction string) *Entity {
 		Indestructible:  false,
 		RemoveOnContact: true,
 		Health:          1,
+		Damage:          1,
 	}
 }
 

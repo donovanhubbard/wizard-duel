@@ -277,3 +277,30 @@ func TestMoveFireballWestIntoCastle(t *testing.T) {
 		t.Fatalf("Fireball did not disapear")
 	}
 }
+
+func TestMoveFireballDamagePlayer(t *testing.T) {
+	startingHealth := 5
+	app := &App{grid: NewGrid()}
+	fireball := CreateFireball(NORTH)
+	(*app.grid)[1][1] = fireball
+	player := CreateNextPlayer()
+	player.Health = startingHealth
+	(*app.grid)[0][1] = player
+	app.MoveAll()
+	if player.Health != startingHealth-fireball.Damage {
+		t.Fatalf("Fireball did not damage player")
+	}
+}
+
+func TestMoveFireballDoesNotDamageCastle(t *testing.T) {
+	app := &App{grid: NewGrid()}
+	fireball := CreateFireball(NORTH)
+	(*app.grid)[1][1] = fireball
+	castle := CreateCastle()
+	startingHealth := castle.Health
+	(*app.grid)[0][1] = castle
+	app.MoveAll()
+	if castle.Health != startingHealth {
+		t.Fatalf("Fireball damaged castle")
+	}
+}
