@@ -81,14 +81,6 @@ func Move(oldGrid *Grid, nextGrid *Grid, y int, x int) {
 
 	nextEntityOldGrid := (*oldGrid)[nextY][nextX]
 	nextEntityNextGrid := (*nextGrid)[nextY][nextX]
-  // fmt.Println("STARTING")
-  // fmt.Println(y)
-  // fmt.Println(x)
-  // fmt.Sprintf("Preparing move y:%d x:%d\n",y,x)
-  // fmt.Println("nextEntityOldGrid")
-  // fmt.Println(nextEntityOldGrid)
-  // fmt.Println("nextEntityNextGrid")
-  // fmt.Println(nextEntityNextGrid)
 
 	if nextEntityOldGrid == nil && nextEntityNextGrid == nil{
 		(*nextGrid)[nextY][nextX] = entity
@@ -97,7 +89,6 @@ func Move(oldGrid *Grid, nextGrid *Grid, y int, x int) {
 			(*nextGrid)[y][x] = entity
 		}
     if entity.Damage > 0 {
-      // fmt.Println("Damage listed")
       if nextEntityOldGrid != nil && !nextEntityOldGrid.Indestructible{
 			  nextEntityOldGrid.DealDamage(entity.Damage)
       }else if nextEntityNextGrid != nil && !nextEntityNextGrid.Indestructible{
