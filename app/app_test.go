@@ -66,7 +66,7 @@ func TestMovePlayerWest(t *testing.T) {
 func TestMovePlayerNorthIntoBoundary(t *testing.T) {
 	app := &App{grid: NewGrid()}
 	player := CreateNextPlayer()
-	player.NextMove = NORTH
+player.NextMove = NORTH
 	(*app.grid)[0][1] = player
 	app.MoveAll()
 	targetEntity := (*app.grid)[0][1]
@@ -302,5 +302,24 @@ func TestMoveFireballDoesNotDamageCastle(t *testing.T) {
 	app.MoveAll()
 	if castle.Health != startingHealth {
 		t.Fatalf("Fireball damaged castle")
+	}
+}
+
+func TestMovePlayersIntoSameSquare(t *testing.T) {
+	app := &App{grid: NewGrid()}
+	player1 := CreateNextPlayer()
+	player2 := CreateNextPlayer()
+	player1.NextMove = EAST
+	player2.NextMove = WEST
+	(*app.grid)[1][1] = player1
+	(*app.grid)[1][3] = player2
+	app.MoveAll()
+	targetEntity := (*app.grid)[1][2]
+	if targetEntity == nil || player1.ID != targetEntity.ID {
+		t.Fatalf("Player1 did not move where it should have")
+	}
+	targetEntity = (*app.grid)[1][3]
+	if targetEntity == nil || player2.ID != targetEntity.ID {
+		t.Fatalf("Player2 did not move where it should have")
 	}
 }
