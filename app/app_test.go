@@ -66,7 +66,7 @@ func TestMovePlayerWest(t *testing.T) {
 func TestMovePlayerNorthIntoBoundary(t *testing.T) {
 	app := &App{grid: NewGrid()}
 	player := CreateNextPlayer()
-player.NextMove = NORTH
+	player.NextMove = NORTH
 	(*app.grid)[0][1] = player
 	app.MoveAll()
 	targetEntity := (*app.grid)[0][1]
@@ -321,5 +321,21 @@ func TestMovePlayersIntoSameSquare(t *testing.T) {
 	targetEntity = (*app.grid)[1][3]
 	if targetEntity == nil || player2.ID != targetEntity.ID {
 		t.Fatalf("Player2 did not move where it should have")
+	}
+}
+
+func TestDealDamageRemovesPlayer(t *testing.T) {
+	app := &App{grid: NewGrid()}
+	player := CreateNextPlayer()
+	player.NextMove = EAST
+	(*app.grid)[1][1] = player
+	player.Health = 1
+	app.grid.DealDamage(player, 5)
+	targetEntity := (*app.grid)[1][1]
+	if targetEntity != nil {
+		t.Fatalf("Player was not removed by dying")
+	}
+	if player.IsDead != true {
+		t.Fatalf("Player did not die")
 	}
 }

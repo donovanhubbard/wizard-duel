@@ -5,6 +5,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/enescakir/emoji"
+	"github.com/charmbracelet/log"
 	"strings"
 )
 
@@ -37,6 +38,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.App.Send(msg)
 		case "w":
+      log.Info("Pressing w")
 			msg := PlanMoveMsg{
 				Direction: NORTH,
 				ID:        m.ID,
@@ -82,6 +84,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				Direction: WEST,
 			}
 			m.App.Send(msg)
+		case " ":
+      log.Info("Pressing space")
+			msg := TryRespawnMsg{
+				ID: m.ID,
+			}
+			m.App.Send(msg)
 		}
 	case GridUpdateMsg:
 		m.Grid = msg.Grid
@@ -117,7 +125,8 @@ func (m Model) View() string {
 
 	move := defaultStyle.SetString("Move: WASD").String()
 	shoot := defaultStyle.SetString(fmt.Sprintf("%v: Arrows", emoji.Fire)).String()
-	footer := lipgloss.JoinHorizontal(lipgloss.Center, move, shoot)
+  respawn := defaultStyle.SetString("Respawn: Spacebar").String()
+	footer := lipgloss.JoinHorizontal(lipgloss.Center, move, shoot, respawn)
 
 	text := lipgloss.JoinVertical(lipgloss.Center, header, grid, footer)
 

@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/wish"
 	bm "github.com/charmbracelet/wish/bubbletea"
 	"time"
+  "errors"
 )
 
 const (
@@ -18,6 +19,7 @@ type App struct {
 	grid          *Grid
 	teaPrograms   []*tea.Program
 	pendingSpells map[string]CastSpellMsg
+  players       []*Entity
 }
 
 func NewApp() App {
@@ -38,6 +40,15 @@ func (a *App) Start() {
 			a.Send(GridUpdateMsg{*a.grid})
 		}
 	}()
+}
+
+func (a *App) FindPlayer(id string) (error,*Entity){
+  for _, p := range a.players {
+    if p.ID == id {
+      return nil, p
+    }
+  }
+  return errors.New(fmt.Sprintf("Could not find player id=%s",id)),nil
 }
 
 func (a *App) MoveAll() {
@@ -109,6 +120,17 @@ func (a *App) Send(msg tea.Msg) {
 		}
 	case CastSpellMsg:
 		a.pendingSpells[msg.ID] = msg
+	case TryRespawnMsg:
+		log.Debug(fmt.Sprintf("Trying to respawn %s", msg.ID))
+    err, player := a.FindPlayer(msg.ID)
+		if err != nil {
+			log.Errorf(err.Error())
+		} else {
+			if player.IsDead {
+				a.grid.PlacePlayer(player)
+        player.IsDead = false
+			}
+		}
 	}
 }
 
@@ -122,6 +144,7 @@ func (a *App) ProgramHandler(s ssh.Session) *tea.Program {
 	model.Grid = *a.grid
 	player := CreateNextPlayer()
 	a.grid.PlacePlayer(player)
+  a.players = append(a.players, player)
 	model.ID = player.ID
 	model.PC = player
 

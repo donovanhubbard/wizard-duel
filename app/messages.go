@@ -14,3 +14,7 @@ type CastSpellMsg struct {
 	Type      string
 	Direction string
 }
+
+type TryRespawnMsg struct {
+	ID string
+}

@@ -3,6 +3,7 @@ package app
 import (
 	"errors"
 	"fmt"
+	"github.com/charmbracelet/log"
 	"math/rand"
 )
 
@@ -47,6 +48,11 @@ func Move(oldGrid *Grid, nextGrid *Grid, y int, x int) {
 	var nextY, nextX int
 	entity := (*oldGrid)[y][x]
 
+  if entity.IsDead {
+	 (*oldGrid)[y][x] = nil
+   return
+  }
+
 	switch entity.NextMove {
 	case NORTH:
 		if y > 0 {
@@ -82,19 +88,19 @@ func Move(oldGrid *Grid, nextGrid *Grid, y int, x int) {
 	nextEntityOldGrid := (*oldGrid)[nextY][nextX]
 	nextEntityNextGrid := (*nextGrid)[nextY][nextX]
 
-	if nextEntityOldGrid == nil && nextEntityNextGrid == nil{
+	if nextEntityOldGrid == nil && nextEntityNextGrid == nil {
 		(*nextGrid)[nextY][nextX] = entity
 	} else {
 		if !entity.RemoveOnContact {
 			(*nextGrid)[y][x] = entity
 		}
-    if entity.Damage > 0 {
-      if nextEntityOldGrid != nil && !nextEntityOldGrid.Indestructible{
-			  nextEntityOldGrid.DealDamage(entity.Damage)
-      }else if nextEntityNextGrid != nil && !nextEntityNextGrid.Indestructible{
-			  nextEntityNextGrid.DealDamage(entity.Damage)
-      }
-    }
+		if entity.Damage > 0 {
+			if nextEntityOldGrid != nil && !nextEntityOldGrid.Indestructible {
+				oldGrid.DealDamage(nextEntityOldGrid, entity.Damage)
+			} else if nextEntityNextGrid != nil && !nextEntityNextGrid.Indestructible {
+				nextGrid.DealDamage(nextEntityNextGrid, entity.Damage)
+			}
+		}
 	}
 
 	switch entity.Type {
@@ -105,6 +111,7 @@ func Move(oldGrid *Grid, nextGrid *Grid, y int, x int) {
 
 func (g *Grid) SpawnEntity(e *Entity, y int, x int) {
 	(*g)[y][x] = e
+	e.IsDead = false
 }
 
 func (g *Grid) FindEntity(id string) (*Entity, int, int, error) {
@@ -119,4 +126,23 @@ func (g *Grid) FindEntity(id string) (*Entity, int, int, error) {
 		}
 	}
 	return nil, 0, 0, errors.New(fmt.Sprintf("Failed to find entity '%s'", id))
+}
+
+func (g *Grid) DealDamage(entity *Entity, amount int) {
+	if !entity.Indestructible {
+		entity.Health -= amount
+
+		if entity.Health <= 0 {
+			entity.IsDead = true
+      log.Debug(fmt.Sprintf("Killing entity %s ID=%s",entity.Type, entity.ID))
+			_, y, x, err := g.FindEntity(entity.ID)
+
+			if err != nil {
+				log.Error(fmt.Sprintf("Tried to kill an entity that could not be found. %s", entity.ID))
+			} else {
+        log.Debug(fmt.Sprintf("Removing entity at y=%d, x=%d", y, x))
+				(*g)[y][x] = nil
+			}
+		}
+	}
 }

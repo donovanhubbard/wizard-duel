@@ -33,12 +33,7 @@ type Entity struct {
 	RemoveOnContact bool
 	Health          int
 	Damage          int
-}
-
-func (e *Entity) DealDamage(amount int) {
-	if !e.Indestructible {
-		e.Health -= amount
-	}
+	IsDead          bool
 }
 
 func CreateNextPlayer() *Entity {
