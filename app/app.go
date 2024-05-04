@@ -73,31 +73,45 @@ func (a *App) CastSpells() {
 		log.Info(fmt.Sprintf("spellMsg.Type=%s spellMsg.Direction=%s", spellMsg.Type, spellMsg.Direction))
 		log.Info(err)
 
+    var newY, newX int
+    var direction string
+
 		if err == nil {
 			switch spellMsg.Type {
 			case FIREBALL:
 				switch spellMsg.Direction {
 				case NORTH:
 					if y > 0 {
-						e := CreateFireball(NORTH)
-						a.grid.SpawnEntity(e, y-1, x)
+            direction = NORTH
+            newY = y-1
+            newX = x
 					}
 				case SOUTH:
 					if y < len(*a.grid)-1 {
-						e := CreateFireball(SOUTH)
-						a.grid.SpawnEntity(e, y+1, x)
+            direction = SOUTH
+            newY = y+1
+            newX = x
 					}
 				case EAST:
 					if x < len((*a.grid)[y])-1 {
-						e := CreateFireball(EAST)
-						a.grid.SpawnEntity(e, y, x+1)
+            direction = EAST
+            newY = y
+            newX = x+1
 					}
 				case WEST:
 					if x > 0 {
-						e := CreateFireball(WEST)
-						a.grid.SpawnEntity(e, y, x-1)
+            direction = WEST
+            newY = y
+            newX = x - 1
 					}
 				}
+        if direction != "" {
+          e := CreateFireball(direction)
+          newEntity := (*a.grid)[newY][newX]
+          if newEntity == nil {
+			      a.grid.SpawnEntity(e, newY, newX)
+          }
+        }
 			}
 		}
 	}
