@@ -44,51 +44,98 @@ func (g *Grid) PlacePlayer(p *Entity) {
 	(*g)[y][x] = p
 }
 
-func Move(oldGrid *Grid, nextGrid *Grid, y int, x int) {
+func getNextCoordinate(grid *Grid, entity *Entity, y int, x int)(int,int){
 	var nextY, nextX int
-	entity := (*oldGrid)[y][x]
-
-  if entity.IsDead {
-	 (*oldGrid)[y][x] = nil
-   return
-  }
 
 	switch entity.NextMove {
 	case NORTH:
-		if y > 0 {
-			nextY = y - 1
-		} else {
-			nextY = y
-		}
+		nextY = y - 1
 		nextX = x
 	case SOUTH:
-		if y < len(*oldGrid)-1 {
-			nextY = y + 1
-		} else {
-			nextY = y
-		}
+		nextY = y + 1
 		nextX = x
 	case WEST:
-		if x > 0 {
-			nextX = x - 1
-		}
+		nextX = x - 1
 		nextY = y
 	case EAST:
-		if x < len((*oldGrid)[y])-1 {
-			nextX = x + 1
-		} else {
-			nextX = x
-		}
+		nextX = x + 1
 		nextY = y
 	default:
 		nextY = y
 		nextX = x
 	}
 
+  return nextY,nextX
+}
+
+func trimNextCoordinate(grid *Grid, y int, x int)(int,int){
+  var nextY, nextX int
+  if(y < 0){
+    nextY = 0
+  }else if y >= len(*grid){
+    nextY = len(*grid)-1
+  } else {
+    nextY = y
+  }
+  if(x < 0){
+    nextX = 0
+  } else if x >= len((*grid)[nextY]){
+    nextX = len((*grid)[nextY]) - 1
+  }else {
+    nextX = x
+  }
+
+  return nextY, nextX
+}
+
+func isOutOfBounds(grid *Grid, y int, x int) bool {
+  if y < 0 {
+    return true
+  }
+  if y >= len(*grid) {
+    return true
+  }
+
+  if x < 0 {
+    return true
+  }else if x >= len((*grid)[y]) {
+    return true
+  }
+  return false
+}
+
+func Move(oldGrid *Grid, nextGrid *Grid, y int, x int) {
+	entity := (*oldGrid)[y][x]
+  if entity == nil {
+    return
+  }
+
+  if entity.IsDead {
+	 (*oldGrid)[y][x] = nil
+   return
+  }
+
+  if isOutOfBounds(oldGrid,y,x) {
+    if(entity.RemoveOnContact){
+      (*oldGrid)[y][x] = nil
+      return
+    }
+  }
+  nextY, nextX := getNextCoordinate(oldGrid, entity, y, x)
+  if isOutOfBounds(oldGrid,nextY,nextX) {
+    if(entity.RemoveOnContact){
+      (*oldGrid)[y][x] = nil
+      return
+    }else{
+      nextY, nextX = trimNextCoordinate(oldGrid,nextY,nextX)
+    }
+  }
+
 	nextEntityOldGrid := (*oldGrid)[nextY][nextX]
 	nextEntityNextGrid := (*nextGrid)[nextY][nextX]
 
-	if nextEntityOldGrid == nil && nextEntityNextGrid == nil {
+
+	if (nextEntityOldGrid == nil && nextEntityNextGrid == nil) || (nextEntityOldGrid != nil && nextEntityOldGrid.NextMove != ""){
 		(*nextGrid)[nextY][nextX] = entity
 	} else {
 		if !entity.RemoveOnContact {

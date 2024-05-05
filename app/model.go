@@ -5,7 +5,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/enescakir/emoji"
-	"github.com/charmbracelet/log"
 	"strings"
 )
 
@@ -38,7 +37,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.App.Send(msg)
 		case "w":
-      log.Info("Pressing w")
 			msg := PlanMoveMsg{
 				Direction: NORTH,
 				ID:        m.ID,
@@ -85,7 +83,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.App.Send(msg)
 		case " ":
-      log.Info("Pressing space")
 			msg := TryRespawnMsg{
 				ID: m.ID,
 			}

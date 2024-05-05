@@ -57,7 +57,7 @@ func (a *App) MoveAll() {
 	for y, _ := range *oldGrid {
 		for x, _ := range (*oldGrid)[y] {
 			entity := (*oldGrid)[y][x]
-			if entity != nil { //&& entity.NextMove != "" {
+			if entity != nil {
 				Move(oldGrid, nextGrid, y, x)
 			}
 		}
@@ -67,11 +67,7 @@ func (a *App) MoveAll() {
 
 func (a *App) CastSpells() {
 	for id, spellMsg := range a.pendingSpells {
-		log.Info(fmt.Sprintf("Player %s is casting spell %s in diretion %s", id, spellMsg.Type, spellMsg.Direction))
 		_, y, x, err := a.grid.FindEntity(id)
-
-		log.Info(fmt.Sprintf("spellMsg.Type=%s spellMsg.Direction=%s", spellMsg.Type, spellMsg.Direction))
-		log.Info(err)
 
     var newY, newX int
     var direction string
@@ -141,6 +137,7 @@ func (a *App) Send(msg tea.Msg) {
 			log.Errorf(err.Error())
 		} else {
 			if player.IsDead {
+        player.Health = 5
 				a.grid.PlacePlayer(player)
         player.IsDead = false
 			}

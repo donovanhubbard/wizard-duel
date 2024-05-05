@@ -69,6 +69,7 @@ func TestMovePlayerNorthIntoBoundary(t *testing.T) {
 	player.NextMove = NORTH
 	(*app.grid)[0][1] = player
 	app.MoveAll()
+
 	targetEntity := (*app.grid)[0][1]
 	if targetEntity == nil || player.ID != targetEntity.ID {
 		t.Fatalf("Player did not move where it should have")
