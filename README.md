@@ -8,10 +8,14 @@ Players fight in a deathmatch by shooting fireballs at eachother.
 
 Built using Charm's [Bubble tea](https://github.com/charmbracelet/bubbletea), [Lip gloss](https://github.com/charmbracelet/lipgloss), and [Wish](https://github.com/charmbracelet/wish) libraries.
 
-## How to play
+## How to Play 
 
 ```bash
-ssh wizards.svenxix.net
+go build
+
+./wizard-duel
+
+ssh -p 23234 localhost
 ```
 
-No download required. Bring a friend.
+Bring some friends
