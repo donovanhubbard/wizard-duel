@@ -13,24 +13,45 @@ import (
 	"github.com/muesli/termenv"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 )
 
 const (
 	host = "0.0.0.0"
-	port = 23234
 )
 
 func main() {
 	log.SetLevel(log.DebugLevel)
 	log.Infof("Starting program.")
 
+	portStr := os.Getenv("PORT")
+	if portStr == "" {
+		portStr = "23234"
+	}
+	log.Info(fmt.Sprintf("Using port: %s", portStr))
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		log.Error(fmt.Sprintf("could not convert port to int: %v", err))
+		os.Exit(1)
+	}
+
+	keyPath := os.Getenv("PRIVATE_KEY_PATH")
+	if keyPath == "" {
+		keyPath = ".ssh/term_info_ed25519"
+	}
+	log.Info(fmt.Sprintf("Using key path: %s", keyPath))
+
+	if _, err := os.Stat(keyPath); os.IsNotExist(err) {
+		log.Warn(fmt.Sprintf("Key path does not exist: %s. Generating a new key pair", keyPath))
+	}
+
 	a := app.NewApp()
 
 	s, err := wish.NewServer(
 		wish.WithAddress(fmt.Sprintf("%s:%d", host, port)),
-		wish.WithHostKeyPath(".ssh/term_info_ed25519"),
+		wish.WithHostKeyPath(keyPath),
 		wish.WithMiddleware(
 			bm.MiddlewareWithProgramHandler(a.ProgramHandler, termenv.ANSI256),
 			logging.Middleware(),

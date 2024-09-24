@@ -1,0 +1,30 @@
+# fly.toml app configuration file generated for wizard-duel on 2024-09-23T19:28:35-05:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'wizard-duel'
+primary_region = 'dfw'
+
+[build]
+
+[[services]]
+  internal_port = 23234
+  protocol = "tcp"
+  auto_stop_machines = true
+  auto_start_machines = true
+  [[services.ports]]
+    port = 22
+
+[[vm]]
+  memory = '256mb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[mounts]
+  source = "ssh_key"
+  destination = "/data"
+
+[env]
+PRIVATE_KEY_PATH = "/data/private_key"
+PORT = "23234"
