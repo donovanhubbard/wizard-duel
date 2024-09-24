@@ -6,6 +6,6 @@ WORKDIR /app
 COPY . /app
 
 RUN go mod download
-RUN go build -o main .
+RUN go build -o wizard-duel .
 
 CMD ["/app/wizard-duel"]
