@@ -18,4 +18,12 @@ go build
 ssh -p 23234 localhost
 ```
 
+As of right now, the game is accessible at 
+
+```
+ssh wizard-duel.svenxix.net
+```
+
+But there is no gaurantees that it will stay up.
+
 Bring some friends
