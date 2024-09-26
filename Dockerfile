@@ -10,7 +10,7 @@ RUN go build -o wizard-duel .
 
 FROM debian:bullseye-slim
 
-RUN useradd -ms /bin/bash newuser
+RUN useradd -ms /bin/bash app
 
 RUN mkdir /app
 WORKDIR /app
