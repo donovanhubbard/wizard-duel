@@ -12,13 +12,10 @@ RUN go build -o wizard-duel .
 
 FROM debian:bookworm-slim
 
-RUN useradd -ms /bin/bash app
 
-RUN mkdir /app && mkdir /app/.ssh && chown -R app:app /app/.ssh
+RUN mkdir /app
 WORKDIR /app
 
-COPY --chown=app:app --from=builder /app/wizard-duel /app/wizard-duel
-
-USER app
+COPY --from=builder /app/wizard-duel /app/wizard-duel
 
 CMD ["/app/wizard-duel"]
