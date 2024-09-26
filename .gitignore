@@ -23,3 +23,4 @@ go.work
 .ssh/
 
 wizard-duel
+*.log
