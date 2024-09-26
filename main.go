@@ -4,18 +4,21 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/charmbracelet/log"
-	"github.com/charmbracelet/ssh"
-	"github.com/charmbracelet/wish"
-	bm "github.com/charmbracelet/wish/bubbletea"
-	"github.com/charmbracelet/wish/logging"
-	"github.com/donovanhubbard/wizard-duel/app"
-	"github.com/muesli/termenv"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
 	"time"
+
+	"github.com/charmbracelet/log"
+	"github.com/charmbracelet/ssh"
+	"github.com/charmbracelet/wish"
+	"github.com/charmbracelet/wish/accesscontrol"
+	"github.com/charmbracelet/wish/activeterm"
+	bm "github.com/charmbracelet/wish/bubbletea"
+	"github.com/charmbracelet/wish/logging"
+	"github.com/donovanhubbard/wizard-duel/app"
+	"github.com/muesli/termenv"
 )
 
 const (
@@ -55,6 +58,8 @@ func main() {
 		wish.WithMiddleware(
 			bm.MiddlewareWithProgramHandler(a.ProgramHandler, termenv.ANSI256),
 			logging.Middleware(),
+			activeterm.Middleware(),
+			accesscontrol.Middleware(),
 		),
 	)
 
