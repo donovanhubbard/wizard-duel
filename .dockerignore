@@ -25,3 +25,5 @@
 
 **/wizard-duel
 fly.toml
+Dockerfile
+*.log
